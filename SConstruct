@@ -44,7 +44,8 @@ env.Append(CPPPATH=["ultralight/include/"])
 
 if env["target"] in ["editor", "template_debug"]:
     try:
-        doc_data = env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
+        doc_data = env.GodotCPPDocData(
+            "src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
         sources.append(doc_data)
     except AttributeError:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
@@ -55,11 +56,12 @@ filepath = ""
 if env["platform"] == "windows":
     env.Append(LIBPATH=["ultralight/lib/"])
 elif env["platform"] == "linux":
-    env.Append(LIBPATH=[f"ultralight/bin/linux/{env["arch"]}/"])
+    env.Append(LIBPATH=[f"ultralight/bin/linux/{env['arch']}/"])
 elif env["platform"] == "macos":
-    env.Append(LIBPATH=[f"ultralight/bin/macos/{env["arch"]}/"])
-    if env["arch"] == "arm64":
-        env.Append(LINKFLAGS=['-arch', 'arm64', '-rpath', os.path.abspath("ultralight/bin/macos/arm64/")])
+    env.Append(LIBPATH=[f"ultralight/bin/macos/{env['arch']}/"])
+    if env['arch'] == "arm64":
+        env.Append(LINKFLAGS=['-arch', 'arm64', '-rpath',
+                   os.path.abspath("ultralight/bin/macos/arm64/")])
 elif env["platform"] == "ios":
     filepath = "{}.framework/".format(env["platform"])
     file = "{}{}".format(libname, env["suffix"])
@@ -75,14 +77,15 @@ library = env.SharedLibrary(
     source=sources,
 )
 
-copy = env.InstallAs("{}/addons/{}/bin/{}/{}/{}{}".format(projectdir, libname, env["platform"], env["arch"], filepath, file), library)
+copy = env.InstallAs("{}/addons/{}/bin/{}/{}/{}{}".format(projectdir,
+                     libname, env["platform"], env['arch'], filepath, file), library)
 
 copy_libraries = None
 
 if env["platform"] == "windows":
     copy_libraries = env.Install(
-        f"{projectdir}/addons/{libname}/bin/windows/{env["arch"]}",
-        source = [
+        f"{projectdir}/addons/{libname}/bin/windows/{env['arch']}",
+        source=[
             f"ultralight/bin/windows/AppCore.dll",
             f"ultralight/bin/windows/Ultralight.dll",
             f"ultralight/bin/windows/UltralightCore.dll",
@@ -91,33 +94,33 @@ if env["platform"] == "windows":
     )
 elif env["platform"] == "linux":
     copy_libraries = env.Install(
-        f"{projectdir}/addons/{libname}/bin/linux/{env["arch"]}",
-        source = [
-            f"ultralight/bin/linux/{env["arch"]}/libAppCore.so",
-            f"ultralight/bin/linux/{env["arch"]}/libUltralight.so",
-            f"ultralight/bin/linux/{env["arch"]}/libUltralightCore.so",
-            f"ultralight/bin/linux/{env["arch"]}/libWebCore.so"
+        f"{projectdir}/addons/{libname}/bin/linux/{env['arch']}",
+        source=[
+            f"ultralight/bin/linux/{env['arch']}/libAppCore.so",
+            f"ultralight/bin/linux/{env['arch']}/libUltralight.so",
+            f"ultralight/bin/linux/{env['arch']}/libUltralightCore.so",
+            f"ultralight/bin/linux/{env['arch']}/libWebCore.so"
         ]
     )
 elif env["platform"] == "macos":
     copy_libraries = env.Install(
-        f"{projectdir}/addons/{libname}/bin/macos/{env["arch"]}",
-        source = [
-            f"ultralight/bin/macos/{env["arch"]}/libAppCore.dylib",
-            f"ultralight/bin/macos/{env["arch"]}/libUltralight.dylib",
-            f"ultralight/bin/macos/{env["arch"]}/libUltralightCore.dylib",
-            f"ultralight/bin/macos/{env["arch"]}/libWebCore.dylib"
+        f"{projectdir}/addons/{libname}/bin/macos/{env['arch']}",
+        source=[
+            f"ultralight/bin/macos/{env['arch']}/libAppCore.dylib",
+            f"ultralight/bin/macos/{env['arch']}/libUltralight.dylib",
+            f"ultralight/bin/macos/{env['arch']}/libUltralightCore.dylib",
+            f"ultralight/bin/macos/{env['arch']}/libWebCore.dylib"
         ]
     )
 
 copy_resources = env.Install(
     f"{projectdir}/addons/{libname}/",
-    source = ["ultralight/resources/"]
+    source=["ultralight/resources/"]
 )
 
 copy_inspector = env.Install(
     f"{projectdir}/addons/{libname}/",
-    source = ["ultralight/inspector/"]
+    source=["ultralight/inspector/"]
 )
 
 default_args = [library, copy, copy_libraries, copy_resources, copy_inspector]
