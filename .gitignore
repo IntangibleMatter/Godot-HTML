@@ -58,6 +58,9 @@ bin
 # Jetbrains
 .idea/
 
+# clang
+.cache/
+
 # Ultralight
 !ultralight/bin/
 !ultralight/bin/**/*.so
